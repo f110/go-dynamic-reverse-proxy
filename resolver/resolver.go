@@ -36,7 +36,7 @@ func NewRedisResolver(redisHost string) (*Resolver) {
 }
 
 func NewMemoryResolver(filePath string) (*Resolver) {
-    localStorage := NewLocalStorage(filePath)
+    localStorage := NewFileStorage(filePath)
 
     return &Resolver{Storage: localStorage}
 }
