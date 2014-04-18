@@ -35,8 +35,8 @@ func NewRedisStorage(host string) *RedisStorage {
     return &RedisStorage{Pool: pool}
 }
 
-func (r *RedisStorage) Get(key string) (string) {
-    conn := r.Pool.Get()
+func (this *RedisStorage) Get(key string) (string) {
+    conn := this.Pool.Get()
     defer conn.Close()
 
     result, err := redis.String(conn.Do("GET", key))
@@ -48,8 +48,8 @@ func (r *RedisStorage) Get(key string) (string) {
     return result
 }
 
-func (r *RedisStorage) Set(key string, value string) {
-    conn := r.Pool.Get()
+func (this *RedisStorage) Set(key string, value string) {
+    conn := this.Pool.Get()
     defer conn.Close()
 
     _, err := redis.String(conn.Do("SET", key, value))
@@ -63,8 +63,8 @@ func (r *RedisStorage) Set(key string, value string) {
     }
 }
 
-func (r *RedisStorage) Delete(key string) {
-    conn := r.Pool.Get()
+func (this *RedisStorage) Delete(key string) {
+    conn := this.Pool.Get()
     defer conn.Close()
 
     _, err := conn.Do("DEL", key)
@@ -79,8 +79,8 @@ func (r *RedisStorage) Delete(key string) {
     }
 }
 
-func (r *RedisStorage) List() ([]string) {
-    conn := r.Pool.Get()
+func (this *RedisStorage) List() ([]string) {
+    conn := this.Pool.Get()
     defer conn.Close()
 
     result, err := redis.Strings(conn.Do("LRANGE", "host-list", 0, -1))
@@ -119,41 +119,41 @@ func NewLocalStorage(filePath string) *LocalStorage {
     return &LocalStorage{FilePath: filePath, Table: table}
 }
 
-func (l *LocalStorage) Get(key string) (string) {
-    return l.Table[key]
+func (this *LocalStorage) Get(key string) (string) {
+    return this.Table[key]
 }
 
-func (l *LocalStorage) Set(key string, value string) {
-    l.Table[key] = value
+func (this *LocalStorage) Set(key string, value string) {
+    this.Table[key] = value
 
-    l.save()
+    this.save()
 }
 
-func (l *LocalStorage) Delete(key string) {
-    delete(l.Table, key)
+func (this *LocalStorage) Delete(key string) {
+    delete(this.Table, key)
 
-    l.save()
+    this.save()
 }
 
-func (l *LocalStorage) List() ([]string) {
+func (this *LocalStorage) List() ([]string) {
     var keys []string
 
-    for k := range l.Table {
+    for k := range this.Table {
         keys = append(keys, k)
     }
 
     return keys
 }
 
-func (l *LocalStorage) save() {
-    file, err := os.OpenFile(l.FilePath, os.O_WRONLY|os.O_CREATE, 0644)
+func (this *LocalStorage) save() {
+    file, err := os.OpenFile(this.FilePath, os.O_WRONLY|os.O_CREATE, 0644)
     defer file.Close()
     if err != nil {
-        log.Fatal("Could not open file ", l.FilePath)
+        log.Fatal("Could not open file ", this.FilePath)
         return
     }
 
-    b, err := json.Marshal(l.Table)
+    b, err := json.Marshal(this.Table)
     _, err = file.Write(b)
     if err != nil {
         log.Fatal("Could not write storage file")
