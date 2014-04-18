@@ -1,11 +1,11 @@
 package resolver
 
 type MemStorage struct {
-	Table    map[string]string
+	Table map[string]string
 }
 
 func NewMemStorage() *MemStorage {
-    return &MemStorage{Table: make(map[string]string)}
+	return &MemStorage{Table: make(map[string]string)}
 }
 
 func (this *MemStorage) Get(key string) string {
