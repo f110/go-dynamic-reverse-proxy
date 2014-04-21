@@ -1,12 +1,12 @@
 package rproxy
 
 import (
+	"../resolver"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
-	//"log"
-	"../resolver"
+	"net/url"
 )
 
 type RProxy struct {
@@ -18,8 +18,12 @@ func NewReverseProxy() *RProxy {
 	host_resolver := resolver.NewRedisResolver(":6379")
 
 	director := func(request *http.Request) {
-		request.URL.Scheme = "http"
-		request.URL.Host = host_resolver.Resolve(request.Host)
+		proxyUrl, err := url.Parse(host_resolver.Resolve(request.Host))
+		if err != nil {
+			return
+		}
+		request.URL.Scheme = proxyUrl.Scheme
+		request.URL.Host = proxyUrl.Host
 	}
 	reverse_proxy := &httputil.ReverseProxy{Director: director}
 
