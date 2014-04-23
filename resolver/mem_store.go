@@ -25,3 +25,7 @@ func (this *MemStorage) List() []string {
 
 	return keys
 }
+
+func (this *MemStorage) Delete(key string) {
+	delete(this.Table, key)
+}
