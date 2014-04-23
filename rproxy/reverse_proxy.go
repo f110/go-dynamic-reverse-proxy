@@ -14,8 +14,8 @@ type RProxy struct {
 	Resolver     *resolver.Resolver
 }
 
-func NewReverseProxy() *RProxy {
-	host_resolver := resolver.NewRedisResolver(":6379")
+func NewReverseProxy(resolve *resolver.Resolver) *RProxy {
+	host_resolver := resolve
 
 	director := func(request *http.Request) {
 		proxyUrl, err := url.Parse(host_resolver.Resolve(request.Host))
